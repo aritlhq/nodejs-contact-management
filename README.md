@@ -1,5 +1,7 @@
 # Node.js Contact Management
 
+This is a contact management application built with Node.js, Express, and MySQL. The application is designed to help users manage their contacts.
+
 ## Technology Stack
 | Tech Name | Desc |
 | --- | --- |
