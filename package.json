@@ -4,7 +4,8 @@
   "description": "- User Management\r - Contact Management\r - Address Management",
   "main": "index.js",
   "scripts": {
-    "test": "jest -i"
+    "test": "jest -i",
+    "start": "node src/main.js"
   },
   "jest": {
     "transform": {
