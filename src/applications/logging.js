@@ -1,4 +1,4 @@
-import winston from "winston/lib/winston/config";
+import winston from "winston";
 
 export const logger = winston.createLogger({
     level: 'info',
