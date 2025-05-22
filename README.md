@@ -1,4 +1,4 @@
-# CONTACT MANAGEMENT
+# Node.js Contact Management
 
 ## Technology Stack
 | Tech Name | Desc |
