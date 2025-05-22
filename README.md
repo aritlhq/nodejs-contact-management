@@ -10,6 +10,7 @@
 | UUID | as a unique id generator |
 | Jest | as a testing framework |
 | Babel | as a transpiler |
+| Supertest | as a testing library for Express |
 
 ## Features
 - User Management
@@ -17,6 +18,8 @@
 - Address Management
 
 ### User Management Requirements
+Docs: [User API Spec](docs/user.md)
+
 User Data:
 - Username
 - Password
@@ -30,6 +33,9 @@ User API:
 - Logout User
 
 ### Contact Management Requirements
+Docs: [Contact API Spec](docs/contact.md)
+
+
 Contact Data:
 - First Name
 - Last Name
@@ -44,6 +50,8 @@ Contact API:
 - Remove Contact
 
 ### Address Management Requirements
+Docs: [Address API Spec](docs/address.md)
+
 Contact Address Data:
 - Street
 - City
