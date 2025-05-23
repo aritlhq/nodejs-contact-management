@@ -1,4 +1,4 @@
-import { getUserValidation, loginUserValidation, registerUserValidation } from "../validations/user-validation.js"
+import { getUserValidation, loginUserValidation, registerUserValidation, updateUserValidation } from "../validations/user-validation.js"
 import { validate } from "../validations/validation.js"
 import { ResponseError } from "../error/response-error.js";
 import bcrypt from "bcrypt";
@@ -44,13 +44,13 @@ const login = async (request) => {
         }
     });
 
-    if(!user){
+    if (!user) {
         throw new ResponseError(400, "Username or password is wrong!");
     }
 
     const isPasswordValid = await bcrypt.compare(loginRequest.password, user.password);
 
-    if(!isPasswordValid){
+    if (!isPasswordValid) {
         throw new ResponseError(400, "Username or password is wrong!");
     }
 
@@ -81,11 +81,52 @@ const get = async (username) => {
         }
     });
 
-    if(!user){
+    if (!user) {
         throw new ResponseError(404, "User not found!");
     }
 
     return user;
 }
 
-export default { register, login, get };
+const update = async (request) => {
+    const user = validate(updateUserValidation, request);
+
+    const countUser = await prisma.user.count({
+        where: {
+            username: user.username
+        }
+    });
+
+    if (countUser !== 1) {
+        throw new ResponseError(404, "User not found!");
+    }
+
+    const data = {}
+    if (user.name) {
+        data.name = user.name;
+    }
+
+    if (user.password) {
+        data.password = await bcrypt.hash(user.password, 10);
+    }
+
+    return prisma.user.update({
+        data: data,
+        where: {
+            username: user.username
+        },
+        select: {
+            username: true,
+            name: true,
+        }
+    });
+
+
+}
+
+export default {
+    register,
+    login,
+    get,
+    update
+};
