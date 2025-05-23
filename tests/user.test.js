@@ -122,3 +122,37 @@ describe("POST /api/users/login", function () {
         expect(result.body.errors).toBeDefined();
     });
 });
+
+// Get User Test Suite
+describe("GET /api/users/current", function() {
+    beforeEach(async () => {
+        await createTestUser();
+    });
+
+    afterEach(async () => {
+        await removeTestUser();
+    });
+
+    it("Should can get current user", async () => {
+        const result = await supertest(web)
+            .get("/api/users/current")
+            .set("Authorization", "123456789");
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(200);
+        expect(result.body.data.username).toBe("aristwn");
+        expect(result.body.data.name).toBe("Ari Setiawan");
+    });
+
+    it("Should reject if request is invalid", async () => {
+        const result = await supertest(web)
+           .get("/api/users/current")
+           .set("Authorization", "tokenngawur");
+
+           logger.info(result.body);
+
+           expect(result.status).toBe(401);
+           expect(result.body.errors).toBeDefined();
+    });
+});
