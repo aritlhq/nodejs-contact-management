@@ -1,16 +1,13 @@
 import supertest from "supertest";
 import { web } from "../src/applications/web.js";
-import { prisma } from "../src/applications/database.js";
 import { logger } from "../src/applications/logging.js";
+import { createTestUser, removeTestUser } from "./test-util.js";
 
+// Register User Test Suite
 describe('POST /api/users', function () {
 
     afterEach(async () => {
-        await prisma.user.deleteMany({
-            where: {
-                username: "aristwn"
-            }
-        });
+        await removeTestUser();
     });
 
     it('Should can regiter new user', async () => {
@@ -67,6 +64,60 @@ describe('POST /api/users', function () {
 
         logger.info(result.body);
         
+        expect(result.status).toBe(400);
+        expect(result.body.errors).toBeDefined();
+    });
+});
+
+// Login User Test Suite
+describe("POST /api/users/login", function () {
+    beforeEach(async () => {
+        await createTestUser();
+    });
+
+    afterEach(async () => {
+        await removeTestUser();
+    });
+
+    it("Should can login", async () => {
+        const result = await supertest(web)
+            .post("/api/users/login")
+            .send({
+                username: "aristwn",
+                password: "rahasia",
+            });
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(200);
+        expect(result.body.data.token).toBeDefined();
+        expect(result.body.data.token).not.toBe("123456789");
+    });
+
+    it("Should reject if request is invalid", async () => {
+        const result = await supertest(web)
+           .post("/api/users/login")
+           .send({
+                username: "",
+                password: "",
+            });
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(400);
+        expect(result.body.errors).toBeDefined();
+    });
+
+    it("Should reject if username or password is wrong", async () => {
+        const result = await supertest(web)
+          .post("/api/users/login")
+          .send({
+                username: "aristwn",
+                password: "passwordinisalah",
+            });
+
+        logger.info(result.body);
+
         expect(result.status).toBe(400);
         expect(result.body.errors).toBeDefined();
     });
