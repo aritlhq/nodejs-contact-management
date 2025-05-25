@@ -21,7 +21,6 @@ describe('POST /api/users', function () {
             });
 
         logger.info(result.body);
-        console.log(result.body);
 
         expect(result.status).toBe(200);
         expect(result.body.data.username).toBe("aristwn");
@@ -39,7 +38,6 @@ describe('POST /api/users', function () {
             });
 
         logger.info(result.body);
-        console.log(result.body);
 
         expect(result.status).toBe(400);
         expect(result.body.errors).toBeDefined();
@@ -68,7 +66,6 @@ describe('POST /api/users', function () {
             });
 
         logger.info(result.body);
-        console.log(result.body);
 
         expect(result.status).toBe(400);
         expect(result.body.errors).toBeDefined();
@@ -94,7 +91,6 @@ describe("POST /api/users/login", function () {
             });
 
         logger.info(result.body);
-        console.log(result.body);
 
         expect(result.status).toBe(200);
         expect(result.body.data.token).toBeDefined();
@@ -110,7 +106,6 @@ describe("POST /api/users/login", function () {
             });
 
         logger.info(result.body);
-        console.log(result.body);
 
         expect(result.status).toBe(400);
         expect(result.body.errors).toBeDefined();
@@ -125,7 +120,6 @@ describe("POST /api/users/login", function () {
             });
 
         logger.info(result.body);
-        console.log(result.body);
 
         expect(result.status).toBe(400);
         expect(result.body.errors).toBeDefined();
@@ -148,7 +142,6 @@ describe("GET /api/users/current", function () {
             .set("Authorization", "123456789");
 
         logger.info(result.body);
-        console.log(result.body);
 
         expect(result.status).toBe(200);
         expect(result.body.data.username).toBe("aristwn");
@@ -161,7 +154,6 @@ describe("GET /api/users/current", function () {
             .set("Authorization", "tokenngawur");
 
         logger.info(result.body);
-        console.log(result.body);
 
         expect(result.status).toBe(401);
         expect(result.body.errors).toBeDefined();
@@ -188,7 +180,6 @@ describe("PATCH /api/users/current", function () {
             });
 
         logger.info(result.body);
-        console.log(result.body);
 
         expect(result.status).toBe(200);
         expect(result.body.data.username).toBe("aristwn");
@@ -207,7 +198,6 @@ describe("PATCH /api/users/current", function () {
             });
 
         logger.info(result.body);
-        console.log(result.body);
 
         expect(result.status).toBe(200);
         expect(result.body.data.username).toBe("aristwn");
@@ -223,7 +213,6 @@ describe("PATCH /api/users/current", function () {
             });
 
         logger.info(result.body);
-        console.log(result.body);
 
         expect(result.status).toBe(200);
 
@@ -241,7 +230,6 @@ describe("PATCH /api/users/current", function () {
             });
 
         logger.info(result.body);
-        console.log(result.body);
 
         expect(result.status).toBe(401);
     })
@@ -262,7 +250,6 @@ describe("DELETE /api/users/logout", function () {
             .set("Authorization", "123456789");
 
         logger.info(result.body);
-        console.log(result.body);
 
         expect(result.status).toBe(200);
         expect(result.body.data).toBe("OK");
@@ -277,7 +264,6 @@ describe("DELETE /api/users/logout", function () {
            .set("Authorization", "tokenngawur");
            
         logger.info(result.body);
-        console.log(result.body);
 
         expect(result.status).toBe(401);
     });
