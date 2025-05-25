@@ -8,6 +8,7 @@ describe users;
 select * from users;
 
 describe contacts;
+select * from contacts;
 
 describe addresses;
 
