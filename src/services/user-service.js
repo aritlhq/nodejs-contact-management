@@ -120,13 +120,38 @@ const update = async (request) => {
             name: true,
         }
     });
+}
 
+const logout = async (username) => {
+    username = validate(getUserValidation, username);
 
+    const countUser = await prisma.user.count({
+        where: {
+            username: username
+        }
+    });
+
+    if(!countUser){
+        throw new ResponseError(404, "User not found!");
+    }
+
+    return prisma.user.update({
+        where: {
+          username: username
+        },
+        data: {
+            token: null
+        },
+        select: {
+            username: true,
+        }
+    });
 }
 
 export default {
     register,
     login,
     get,
-    update
+    update,
+    logout
 };
