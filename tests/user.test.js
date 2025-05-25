@@ -64,7 +64,7 @@ describe('POST /api/users', function () {
             });
 
         logger.info(result.body);
-        
+
         expect(result.status).toBe(400);
         expect(result.body.errors).toBeDefined();
     });
@@ -97,8 +97,8 @@ describe("POST /api/users/login", function () {
 
     it("Should reject if request is invalid", async () => {
         const result = await supertest(web)
-           .post("/api/users/login")
-           .send({
+            .post("/api/users/login")
+            .send({
                 username: "",
                 password: "",
             });
@@ -111,8 +111,8 @@ describe("POST /api/users/login", function () {
 
     it("Should reject if username or password is wrong", async () => {
         const result = await supertest(web)
-          .post("/api/users/login")
-          .send({
+            .post("/api/users/login")
+            .send({
                 username: "aristwn",
                 password: "passwordinisalah",
             });
@@ -125,7 +125,7 @@ describe("POST /api/users/login", function () {
 });
 
 // Get User Test Suite
-describe("GET /api/users/current", function() {
+describe("GET /api/users/current", function () {
     beforeEach(async () => {
         await createTestUser();
     });
@@ -148,18 +148,18 @@ describe("GET /api/users/current", function() {
 
     it("Should reject if request is invalid", async () => {
         const result = await supertest(web)
-           .get("/api/users/current")
-           .set("Authorization", "tokenngawur");
+            .get("/api/users/current")
+            .set("Authorization", "tokenngawur");
 
-           logger.info(result.body);
+        logger.info(result.body);
 
-           expect(result.status).toBe(401);
-           expect(result.body.errors).toBeDefined();
+        expect(result.status).toBe(401);
+        expect(result.body.errors).toBeDefined();
     });
 });
 
 // Udpate User Test Suite
-describe("PATCH /api/users/current", function(){
+describe("PATCH /api/users/current", function () {
     beforeEach(async () => {
         await createTestUser();
     });
@@ -170,9 +170,9 @@ describe("PATCH /api/users/current", function(){
 
     it("Should can update current user", async () => {
         const result = await supertest(web)
-           .patch("/api/users/current")
-           .set("Authorization", "123456789")
-           .send({
+            .patch("/api/users/current")
+            .set("Authorization", "123456789")
+            .send({
                 name: "Ari Setiawan Pramoedya",
                 password: "rahasialagi",
             });
@@ -189,9 +189,9 @@ describe("PATCH /api/users/current", function(){
 
     it("Should update name only", async () => {
         const result = await supertest(web)
-          .patch("/api/users/current")
-          .set("Authorization", "123456789")
-          .send({
+            .patch("/api/users/current")
+            .set("Authorization", "123456789")
+            .send({
                 name: "Ari Setiawan Pramoedya",
             });
 
@@ -204,9 +204,9 @@ describe("PATCH /api/users/current", function(){
 
     it("Should update password only", async () => {
         const result = await supertest(web)
-          .patch("/api/users/current")
-          .set("Authorization", "123456789")
-          .send({
+            .patch("/api/users/current")
+            .set("Authorization", "123456789")
+            .send({
                 password: "akuganteng",
             });
 
@@ -218,11 +218,11 @@ describe("PATCH /api/users/current", function(){
         expect(await bcrypt.compare("akuganteng", user.password)).toBe(true);
     });
 
-    it("Should reject if request is invalid", async() => {
+    it("Should reject if request is invalid", async () => {
         const result = await supertest(web)
-          .patch("/api/users/current")
-          .set("Authorization", "tokenngawur")
-          .send({
+            .patch("/api/users/current")
+            .set("Authorization", "tokenngawur")
+            .send({
                 name: "",
                 password: "",
             });
@@ -230,4 +230,37 @@ describe("PATCH /api/users/current", function(){
         logger.info(result.body);
         expect(result.status).toBe(401);
     })
+});
+
+describe("DELETE /api/users/logout", function () {
+    beforeEach(async () => {
+        await createTestUser();
+    });
+
+    afterEach(async () => {
+        await removeTestUser();
+    });
+
+    it("Should can logout", async () => {
+        const result = await supertest(web)
+            .delete("/api/users/logout")
+            .set("Authorization", "123456789");
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(200);
+        expect(result.body.data).toBe("OK");
+
+        const user = await getTestUser();
+        expect(user.token).toBeNull();
+    });
+
+    it("Should reject if request is invalid", async () => {
+        const result = await supertest(web)
+           .delete("/api/users/logout")
+           .set("Authorization", "tokenngawur");
+           
+        logger.info(result.body);
+        expect(result.status).toBe(401);
+    });
 });
