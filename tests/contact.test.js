@@ -1,7 +1,7 @@
 import supertest from "supertest";
 import { web } from "../src/applications/web.js";
 import { logger } from "../src/applications/logging.js";
-import { createTestUser, removeTestUser, removeAllTestContact, createTestContact, getTestContact } from "./test-util.js";
+import { createTestUser, removeTestUser, removeAllTestContact, createTestContact, getTestContact, createManyTestContacts } from "./test-util.js";
 
 describe("POST /api/contacts", function () {
     beforeEach(async () => {
@@ -256,4 +256,102 @@ describe("DELETE /api/contacts/:contactId", function () {
         expect(result.status).toBe(404);
         expect(result.body.errors).toBeDefined();
     });
-})
+});
+
+describe("GET /api/contacts", function () {
+    beforeEach(async () => {
+        await createTestUser();
+        await createManyTestContacts();
+    });
+
+    afterEach(async () => {
+        await removeAllTestContact();
+        await removeTestUser();
+    });
+
+    it("Should can get all contact", async () => {
+        const result = await supertest(web)
+            .get("/api/contacts")
+            .set("Authorization", "123456789");
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(200);
+        expect(result.body.data.length).toBe(10);
+        expect(result.body.paging.page).toBe(1);
+        expect(result.body.paging.total_page).toBe(2);
+        expect(result.body.paging.total_item).toBe(15);
+    });
+
+    it("Should can get all contact with pagination", async () => {
+        const result = await supertest(web)
+            .get("/api/contacts?page=2&size=5")
+            .set("Authorization", "123456789");
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(200);
+        expect(result.body.data.length).toBe(5);
+        expect(result.body.paging.page).toBe(2);
+        expect(result.body.paging.total_page).toBe(3);
+        expect(result.body.paging.total_item).toBe(15);
+    });
+
+    it("Should can search contact", async () => {
+        const result = await supertest(web)
+            .get("/api/contacts?name=Ari")
+            .set("Authorization", "123456789");
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(200);
+        expect(result.body.data.length).toBe(10);
+    });
+
+    it("Should can search contact with pagination", async () => {
+        const result = await supertest(web)
+            .get("/api/contacts?name=Ari&page=2&size=5")
+            .set("Authorization", "123456789");
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(200);
+        expect(result.body.data.length).toBe(5);
+        expect(result.body.paging.page).toBe(2);
+        expect(result.body.paging.total_page).toBe(3);
+        expect(result.body.paging.total_item).toBe(15);
+    });
+
+    it("Should reject if request is invalid", async () => {
+        const result = await supertest(web)
+            .get("/api/contacts?page=0&size=5")
+            .set("Authorization", "123456789");
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(400);
+        expect(result.body.errors).toBeDefined();
+    });
+
+    it("Should reject if request is invalid", async () => {
+        const result = await supertest(web)
+            .get("/api/contacts?page=2&size=0")
+            .set("Authorization", "123456789");
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(400);
+        expect(result.body.errors).toBeDefined();
+    });
+
+    it("Should reject if request is invalid", async () => {
+        const result = await supertest(web)
+            .get("/api/contacts?page=2&size=101")
+            .set("Authorization", "tokenngawur");
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(401);
+        expect(result.body.errors).toBeDefined();
+    });
+});
