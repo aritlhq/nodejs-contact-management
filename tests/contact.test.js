@@ -303,9 +303,28 @@ describe("GET /api/contacts", function () {
             .set("Authorization", "123456789");
 
         logger.info(result.body);
+        console.log(result.body);
 
         expect(result.status).toBe(200);
         expect(result.body.data.length).toBe(10);
+    });
+
+    it("Should can search contact", async () => {
+        const result = await supertest(web)
+            .get("/api/contacts")
+            .query({
+                phone: "081234567899"
+            })
+            .set("Authorization", "123456789");
+
+        logger.info(result.body);
+        console.log(result.body);
+
+        expect(result.status).toBe(200);
+        expect(result.body.data.length).toBe(1);
+        expect(result.body.paging.page).toBe(1);
+        expect(result.body.paging.total_page).toBe(1);
+        expect(result.body.paging.total_item).toBe(1);
     });
 
     it("Should can search contact with pagination", async () => {
