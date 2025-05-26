@@ -181,7 +181,7 @@ describe("PUT /api/contacts/:contactId", function () {
                 email: "reza@stwn.com",
                 phone: "081234567890"
             });
-        
+
         logger.info(result.body);
 
         expect(result.status).toBe(404);
@@ -206,3 +206,54 @@ describe("PUT /api/contacts/:contactId", function () {
         expect(result.body.errors).toBeDefined();
     });
 });
+
+describe("DELETE /api/contacts/:contactId", function () {
+    beforeEach(async () => {
+        await createTestUser();
+        await createTestContact();
+    });
+
+    afterEach(async () => {
+        await removeAllTestContact();
+        await removeTestUser();
+    });
+
+    it("Should can delete contact", async () => {
+        let testContact = await getTestContact();
+        const result = await supertest(web)
+            .delete("/api/contacts/" + testContact.id)
+            .set("Authorization", "123456789");
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(200);
+        expect(result.body.message).toBe("OK");
+
+        testContact = await getTestContact();
+        expect(testContact).toBeNull();
+    });
+
+    it("Should reject if request is invalid", async () => {
+        const testContact = await getTestContact();
+        const result = await supertest(web)
+            .delete("/api/contacts/" + testContact.id)
+            .set("Authorization", "tokenngawur");
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(401);
+        expect(result.body.errors).toBeDefined();
+    });
+
+    it("Should reject if contact is not found", async () => {
+        const testContact = await getTestContact();
+        const result = await supertest(web)
+            .delete("/api/contacts/" + (testContact.id + 1))
+            .set("Authorization", "123456789");
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(404);
+        expect(result.body.errors).toBeDefined();
+    });
+})
