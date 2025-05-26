@@ -97,8 +97,8 @@ describe("GET /api/contacts/:contactId", function () {
     it("Should reject if request is invalid", async () => {
         const testContact = await getTestContact();
         const result = await supertest(web)
-           .get("/api/contacts/" + testContact.id)
-           .set("Authorization", "tokenngawur");
+            .get("/api/contacts/" + testContact.id)
+            .set("Authorization", "tokenngawur");
 
         logger.info(result.body);
 
@@ -109,12 +109,100 @@ describe("GET /api/contacts/:contactId", function () {
     it("Should reject if contact is not found", async () => {
         const testContact = await getTestContact();
         const result = await supertest(web)
-          .get("/api/contacts/" + (testContact.id + 1))
-          .set("Authorization", "123456789");
+            .get("/api/contacts/" + (testContact.id + 1))
+            .set("Authorization", "123456789");
 
         logger.info(result.body);
 
         expect(result.status).toBe(404);
+        expect(result.body.errors).toBeDefined();
+    });
+});
+
+describe("PUT /api/contacts/:contactId", function () {
+    beforeEach(async () => {
+        await createTestUser();
+        await createTestContact();
+    });
+
+    afterEach(async () => {
+        await removeAllTestContact();
+        await removeTestUser();
+    });
+
+    it("Should can update contact", async () => {
+        const testContact = await getTestContact();
+        const result = await supertest(web)
+            .put("/api/contacts/" + testContact.id)
+            .set("Authorization", "123456789")
+            .send({
+                first_name: "Reza",
+                last_name: "Setiawan",
+                email: "reza@stwn.com",
+                phone: "081234567890"
+            });
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(200);
+        expect(result.body.data.id).toBe(testContact.id);
+        expect(result.body.data.first_name).toBe("Reza");
+        expect(result.body.data.last_name).toBe("Setiawan");
+        expect(result.body.data.email).toBe("reza@stwn.com");
+        expect(result.body.data.phone).toBe("081234567890");
+    });
+
+    it("Should reject if request is invalid", async () => {
+        const testContact = await getTestContact();
+        const result = await supertest(web)
+            .put("/api/contacts/" + testContact.id)
+            .set("Authorization", "tokenngawur")
+            .send({
+                first_name: "Reza",
+                last_name: "Setiawan",
+                email: "reza@stwn.com",
+                phone: "081234567890"
+            });
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(401);
+        expect(result.body.errors).toBeDefined();
+    });
+
+    it("Should reject if contact is not found", async () => {
+        const testContact = await getTestContact();
+        const result = await supertest(web)
+            .put("/api/contacts/" + (testContact.id + 1))
+            .set("Authorization", "123456789")
+            .send({
+                first_name: "Reza",
+                last_name: "Setiawan",
+                email: "reza@stwn.com",
+                phone: "081234567890"
+            });
+        
+        logger.info(result.body);
+
+        expect(result.status).toBe(404);
+        expect(result.body.errors).toBeDefined();
+    });
+
+    it("Should reject if request is invalid", async () => {
+        const testContact = await getTestContact();
+        const result = await supertest(web)
+            .put("/api/contacts/" + testContact.id)
+            .set("Authorization", "123456789")
+            .send({
+                first_name: "Muhammad",
+                last_name: "Setiawan",
+                email: "",
+                phone: "081234567890382974982793729873982793792739872987987"
+            });
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(400);
         expect(result.body.errors).toBeDefined();
     });
 });
