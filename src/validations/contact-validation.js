@@ -15,10 +15,10 @@ const updateContactValidation = Joi.object({
     last_name: Joi.string().max(100).required(),
     email: Joi.string().max(100).optional(),
     phone: Joi.string().max(20).optional(),
-})
+});
 
 export {
     createContactValidation,
     getContactValidation,
-    updateContactValidation
+    updateContactValidation,
 }
